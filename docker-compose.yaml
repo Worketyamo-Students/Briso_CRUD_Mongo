@@ -1,0 +1,25 @@
+services:
+  app:
+    build: .
+    ports:
+      - '4000:3000'
+    env_file:
+      - ./.env
+    depends_on:
+      - mongo
+    develop:
+      watch:
+        - path: ./
+          action: rebuild
+
+  mongo:
+    image: mongo:latest
+    ports:
+      - '27017:27017'
+    env_file:
+      - ./.env
+    volumes:
+      - mongo-data:/data/db
+
+volumes:
+  mongo-data:
