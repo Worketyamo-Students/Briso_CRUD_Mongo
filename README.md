@@ -2,30 +2,30 @@
 
 ## Vue d'ensemble
 
-`@worketyamo/ts-starter` est un projet de démarrage TypeScript conçu pour simplifier le développement d'applications Express.js. Ce kit de démarrage inclut les configurations et dépendances essentielles pour vous permettre de démarrer rapidement, tout en appliquant des normes de qualité et de cohérence du code avec ESLint et Prettier.
+`@worketyamo/ts-starter` is a TypeScript starter project designed to simplify the development of Express.js applications. This starter kit includes essential configurations and dependencies to help you get started quickly, while enforcing code quality and consistency standards with ESLint and Prettier.
 
-## Fonctionnalités
+## Features
 
-- TypeScript pour le typage statique et une intelligence de code avancée
-- Express.js pour la création d'APIs et d'applications web robustes
-- ESLint et Prettier pour la qualité et le formatage du code
-- Support des variables d'environnement avec dotenv et env-var
-- Middleware de compression pour améliorer les performances
-- Middleware de limitation de débit pour protéger votre application
-- Intégration de Swagger pour la documentation des APIs
+- TypeScript for static typing and advanced code intelligence
+- Express.js for creating robust APIs and web applications
+- ESLint and Prettier for code quality and formatting
+- Environment variable support with dotenv and env-var
+- Compression middleware to improve performance
+- Rate limiting middleware to protect your application
+- Swagger integration for API documentation
 
-## Prérequis
+## Prerequisites
 
 - Node.js >= 20.12.0
 - Yarn >= 1.22.19
 
-> Note : Utiliser Yarn pour ce projet.
+> Note : Use Yarn for this project..
 
-## Pour commencer
+## Getting Started
 
 ### Installation
 
-Clonez le dépôt et installez les dépendances :
+Clone the repository and install dependencies:
 
 ```bash
 git clone https://github.com/worketyamo/ts-starter.git
@@ -35,7 +35,7 @@ yarn install
 
 ### Exécution en mode développement
 
-Pour démarrer le serveur de développement avec redémarrages automatiques en cas de modifications des fichiers, utilisez :
+To start the development server with automatic restarts on file changes, use:
 
 ```bash
 yarn dev
@@ -43,7 +43,7 @@ yarn dev
 
 ### Compilation du projet
 
-Pour compiler le projet pour la production, utilisez :
+To compile the project for production, use:
 
 ```bash
 yarn build
@@ -51,7 +51,7 @@ yarn build
 
 ### Démarrage de l'application
 
-Pour démarrer l'application après la compilation, utilisez :
+To start the application after compilation, use:
 
 ```bash
 yarn start
@@ -59,39 +59,40 @@ yarn start
 
 ## Scripts
 
-- **dev** : Lance le serveur de développement avec ts-node-dev
-- **build** : Nettoie le dossier dist et compile le code TypeScript
-- **start** : Exécute le code JavaScript compilé à partir du dossier dist
+- **dev** : Starts the development server with ts-node-dev
+- **build** :  Cleans the dist folder and compiles TypeScript code
+- **start** : Runs the compiled JavaScript code from the dist folder
 
 ## Utilisation
 
-Démarrage du serveur
-Pour démarrer le serveur, exécutez la commande suivante :
+
+Starting the Server
+To start the server, run the following command:
 
 ```bash
 yarn start
 ```
-Le serveur sera lancé sur le port : http://localhost:3000
+The server will be launched on port: http://localhost:3000
 
-Documentation de l'API
-La documentation de l'API est accessible à l'adresse suivante :
+API Documentation
+The API documentation is accessible at the following address :
 
 ```sh
 http://localhost:3000/api-docs
  ```
 
-## Licence
+## License
 
-Ce projet est sous licence WORKETYAMO.
+This project is licensed under WORKETYAMO.
 
 ## Contribution
 
-Les contributions sont les bienvenues ! Veuillez ouvrir un problème ou soumettre une demande de tirage.
+Contributions are welcome! Please open an issue or submit a pull request.
 
 ## Auteur
 
-Worketyamo
+Kouam Brice
 
 ## Informations supplémentaires
 
-Pour toute question ou support supplémentaire, veuillez contacter les mainteneurs du projet.
+For any questions or additional support, please contact the project maintainers.

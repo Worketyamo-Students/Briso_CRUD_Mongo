@@ -10,9 +10,57 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// Model facture
+model facture {
+  invoice_id String @id @default(auto()) @map("_id") @db.ObjectId
+  amount Int
+  status String
+  due_date DateTime
+}
+// model projet
 model Projet {
   projet_id String @id @default(auto()) @map("_id") @db.ObjectId
   title String
   description String?
-
+}
+// Model users
+model users {
+  user_id String @id @default(auto()) @map("_id") @db.ObjectId
+  name String
+  email String?
+  age Int
+  password String
+  role String
+}
+// model apprenants
+model apprenants {
+  apprenant_id String @id @default(auto()) @map("_id") @db.ObjectId
+  quizzes String
+  courses String?
+  exercises String
+  
+}
+// model projet
+model Projet {
+  projet_id String @id @default(auto()) @map("_id") @db.ObjectId
+  title String
+  description String?
+}
+// model projet
+model Projet {
+  projet_id String @id @default(auto()) @map("_id") @db.ObjectId
+  title String
+  description String?
+}
+// model projet
+model Projet {
+  projet_id String @id @default(auto()) @map("_id") @db.ObjectId
+  title String
+  description String?
+}
+// model projet
+model Projet {
+  projet_id String @id @default(auto()) @map("_id") @db.ObjectId
+  title String
+  description String?
 }
