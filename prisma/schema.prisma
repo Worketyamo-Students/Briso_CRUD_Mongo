@@ -10,57 +10,68 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// Model users
+model User {
+  user_id   String     @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  email     String?
+  age       Int
+  password  String
+  role      Role @default(USER)
+  apprenant Apprenant?
+}
+
+// model apprenants
+model Apprenant {
+  apprenant_id      String  @id @default(auto()) @map("_id") @db.ObjectId
+  quizzes           String
+  courses           String?
+  exercises         String
+  certifications    String
+  matricule         String  @unique
+  cni               String
+  address           String
+  photo             String
+  phone             String?
+  registration_date String
+  tutor             String
+  school_level      String
+  status            Status
+  user              User    @relation(fields: [userId], references: [user_id])
+  userId            String  @unique @db.ObjectId
+}
+
 // Model facture
 model facture {
-  invoice_id String @id @default(auto()) @map("_id") @db.ObjectId
-  amount Int
-  status String
-  due_date DateTime
+  invoice_id String   @id @default(auto()) @map("_id") @db.ObjectId
+  amount     Int
+  status     String
+  due_date   DateTime
 }
+
 // model projet
 model Projet {
-  projet_id String @id @default(auto()) @map("_id") @db.ObjectId
-  title String
+  projet_id   String  @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
   description String?
 }
-// Model users
-model users {
-  user_id String @id @default(auto()) @map("_id") @db.ObjectId
-  name String
-  email String?
-  age Int
-  password String
-  role String
+
+// enumerations lists
+enum Role {
+  SUPERADMIN
+  ADMIN
+  USER 
+  STUDENT
 }
-// model apprenants
-model apprenants {
-  apprenant_id String @id @default(auto()) @map("_id") @db.ObjectId
-  quizzes String
-  courses String?
-  exercises String
-  
+enum Status {
+  STUDENT
+  PROFESSIONAL
+  OTHER
 }
-// model projet
-model Projet {
-  projet_id String @id @default(auto()) @map("_id") @db.ObjectId
-  title String
-  description String?
-}
-// model projet
-model Projet {
-  projet_id String @id @default(auto()) @map("_id") @db.ObjectId
-  title String
-  description String?
-}
-// model projet
-model Projet {
-  projet_id String @id @default(auto()) @map("_id") @db.ObjectId
-  title String
-  description String?
-}
-// model projet
-model Projet {
-  projet_id String @id @default(auto()) @map("_id") @db.ObjectId
-  title String
-  description String?
+
+// types lists
+type Tutor{
+  mother String
+  father String
+  other String
 }
