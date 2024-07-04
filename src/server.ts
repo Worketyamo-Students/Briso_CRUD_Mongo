@@ -21,7 +21,7 @@ app.use(
 );
 
 app.use(morgan('combined'));
-app.use(router)
+app.use('/projets',router)
 
 setupSwagger(app);
 export default app;

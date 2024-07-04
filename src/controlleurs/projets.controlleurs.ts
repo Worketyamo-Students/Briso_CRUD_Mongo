@@ -1,6 +1,7 @@
 import { Request,Response } from "express";
 import { HttpCode } from "../core/constants";
 import {PrismaClient } from "@prisma/client";
+import chalk from "chalk"
 
 const prisma = new PrismaClient()
 
@@ -11,7 +12,7 @@ const Contolleurs = {
             const projets = await prisma.projet.findMany()
             res.send(projets).status(HttpCode.OK)
         } catch (error) {
-            console.error(error)
+            console.error(chalk.red(error))
         }
     },
     getoneProject : async (req:Request,res:Response)=>{
@@ -24,10 +25,10 @@ const Contolleurs = {
             })
             if(find){
                 res.json(find).status(HttpCode.OK)
-                console.log("Element successfully returned")
+                console.log(chalk.blueBright("Element successfully retrieved"))
             }
         } catch (error) {
-            console.error(error)
+            console.error(chalk.red(error))
         }
     },
     createProject : async (req:Request,res:Response)=>{
@@ -40,9 +41,9 @@ const Contolleurs = {
                 }
             })
             await res.json(projet).status(HttpCode.CREATED);
-            console.log("successfully created")
+            console.log(chalk.blueBright("Element successfully created"))
         } catch (error) {
-            console.log(error)
+            console.error(chalk.red(error))
         }
     },
     modifyProject : async (req: Request,res : Response)=>{
@@ -60,13 +61,13 @@ const Contolleurs = {
             })
             if(updateProjet){
                 await res.json(updateProjet).status(HttpCode.OK)
-                console.log("succesffully updated")
+                console.log(chalk.blueBright("Element successfully updated"))
             }
             else
                 console.log("not working")
                 await console.error("not working")          
         } catch (error) {
-            console.error(error)
+            console.error(chalk.red(error))
         }
     },
     deleteoneProject : async (req: Request,res : Response)=>{
@@ -83,28 +84,9 @@ const Contolleurs = {
             else
                 await console.error("not working")
         } catch (error) {
-            console.log(error)
+            console.error(chalk.red(error))
         }
     },
-    deleteManyProject : async (req:Request,res :Response)=>{
-        try {
-            const {title} = req.body
-            const deleteProjets = await prisma.projet.deleteMany({
-                where : {
-                    title: {
-                       contains: title 
-                    },
-                },
-            })
-            if(deleteProjets)
-                await res.json("All successfully deleted").status(HttpCode.OK)
-            else
-                await console.error("not working")
-        } catch (error) {
-            console.log(error)
-        }
-    },
-    
 }
 
 export default Contolleurs

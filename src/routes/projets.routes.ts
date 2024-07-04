@@ -6,16 +6,14 @@ const router = Router()
 // CRUD Operations:
 
 // GET method 1
-router.get("/projets",Contolleurs.getallProjects)
+router.get("/",Contolleurs.getallProjects)
 // GET method 2
-router.get("/projets/:id",Contolleurs.getoneProject)
+router.get("/:id",Contolleurs.getoneProject)
 // CREATE method
-router.post("/projets",Contolleurs.createProject)
+router.post("/",Contolleurs.createProject)
 // UPDATE method
-router.put("/projets/:id",Contolleurs.modifyProject)
+router.put("/:id",Contolleurs.modifyProject)
 // DELETE method 1
-router.delete("/projets/:id",Contolleurs.deleteoneProject)
-// DELETE method 2
-router.delete("/projets",Contolleurs.deleteManyProject)
+router.delete("/:id",Contolleurs.deleteoneProject)
 
 export default router
