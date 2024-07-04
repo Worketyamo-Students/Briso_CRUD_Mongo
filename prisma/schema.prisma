@@ -14,7 +14,7 @@ datasource db {
 model User {
   user_id   String     @id @default(auto()) @map("_id") @db.ObjectId
   name      String
-  email     String?
+  email     String @unique
   age       Int
   password  String
   role      Role @default(USER)

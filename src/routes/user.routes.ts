@@ -8,7 +8,7 @@ const routerUser = Router()
 // GET method 1
 routerUser.get("/",Contolleurs.getallUsers)
 // GET method 2
-routerUser.get("/:id",Contolleurs.getoneUser)
+routerUser.get("/patate",Contolleurs.getoneUser)
 // CREATE method
 routerUser.post("/",Contolleurs.createUser)
 // UPDATE method

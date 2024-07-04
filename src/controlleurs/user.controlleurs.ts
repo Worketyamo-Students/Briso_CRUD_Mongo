@@ -16,17 +16,18 @@ const Contolleurs = {
         }
     },
     getoneUser : async (req:Request,res:Response)=>{
-        const {id} = req.params
+       const query = req.query.name
         try {
             const find = await prisma.user.findUnique({
                 where: {
-                    user_id : id 
+                    email : query 
                 }
             })
             if(find){
                 res.json(find).status(HttpCode.OK)
                 console.log(chalk.blueBright("Element successfully retrieved"))
             }
+            else res.send({"msg" : "Error my friend"}).status(HttpCode.INTERNAL_SERVER_ERROR)
         } catch (error) {
             console.error(chalk.red(error))
         }
