@@ -1,9 +1,24 @@
 import { Request,Response } from "express";
 import { HttpCode } from "../core/constants";
 import {PrismaClient } from "@prisma/client";
+import bcrypt from 'bcrypt'
+//import jwt from 'jwt'
+
 import chalk from "chalk"
 
 const prisma = new PrismaClient()
+
+// Implementing regex:
+export const regex= {
+    EMAIL_REGEX : /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/,
+    PASSWORD_REGEX : /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+    testRegex : (email:string):boolean =>{
+                    return regex.EMAIL_REGEX.test(email)
+    },
+    testRegex2 : (password:string):boolean =>{
+                    return regex.PASSWORD_REGEX.test(password)
+    }
+}
 
 // creation of objects of functions
 const Contolleurs = {
@@ -16,18 +31,17 @@ const Contolleurs = {
         }
     },
     getoneUser : async (req:Request,res:Response)=>{
-       const query = req.query.name
+        const {id} = req.params
         try {
             const find = await prisma.user.findUnique({
                 where: {
-                    email : query 
+                    user_id : id 
                 }
             })
             if(find){
                 res.json(find).status(HttpCode.OK)
                 console.log(chalk.blueBright("Element successfully retrieved"))
-            }
-            else res.send({"msg" : "Error my friend"}).status(HttpCode.INTERNAL_SERVER_ERROR)
+            }else res.send({"message" : "User not found"})
         } catch (error) {
             console.error(chalk.red(error))
         }
@@ -35,12 +49,24 @@ const Contolleurs = {
     createUser : async (req:Request,res:Response)=>{
         try {
             const {name,email,age,password,role} = req.body
+            // if(!name || !email || !password)
+            //     res.status(HttpCode.BAD_REQUEST).json({"msg": "veillez remplir ces champs"})
+
+            // const isValidEmail = regex.testRegex(regex.testRegex(email))
+            // const isValidPassword = regex.testRegex2(regex.PASSWORD_REGEX)
+
+            // if(!isValidEmail || !isValidPassword)
+            //     res.json({message : "Veillez entrez des informations valides "})
+            
+            // hashing the password
+            const passHash = await bcrypt.hash(password,10)
+
             const user = await prisma.user.create({
                 data : {
                     name,
                     email,
                     age,
-                    password,
+                    password : passHash,
                     role
                 }
             })
@@ -96,4 +122,4 @@ const Contolleurs = {
     },
 }
 
-export default Contolleurs
+export default Contolleurs;
