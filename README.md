@@ -1,6 +1,6 @@
 # @worketyamo/ts-starter
 
-## Vue d'ensemble
+## Overview
 
 `@worketyamo/ts-starter` is a TypeScript starter project designed to simplify the development of Express.js applications. This starter kit includes essential configurations and dependencies to help you get started quickly, while enforcing code quality and consistency standards with ESLint and Prettier.
 
