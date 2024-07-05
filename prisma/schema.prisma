@@ -12,23 +12,23 @@ datasource db {
 
 // Model users
 model User {
-  user_id   String     @id @default(auto()) @map("_id") @db.ObjectId
+  user_id   String   @id @default(auto()) @map("_id") @db.ObjectId
   name      String
-  email     String @unique
+  email     String   @unique
   age       Int
   password  String
-  role      Role @default(USER)
-  apprenant Apprenant?
+  role      Role     @default(USER)
+  apprenant Student?
 }
 
 // model apprenants
-model Apprenant {
-  apprenant_id      String  @id @default(auto()) @map("_id") @db.ObjectId
+model Student {
+  student_id        String    @id @default(auto()) @map("_id") @db.ObjectId
   quizzes           String
   courses           String?
   exercises         String
   certifications    String
-  matricule         String  @unique
+  matricule         String    @unique
   cni               String
   address           String
   photo             String
@@ -37,8 +37,58 @@ model Apprenant {
   tutor             String
   school_level      String
   status            Status
-  user              User    @relation(fields: [userId], references: [user_id])
-  userId            String  @unique @db.ObjectId
+  user              User      @relation(fields: [userId], references: [user_id])
+  userId            String    @unique @db.ObjectId
+  projectIDs        String[]  @db.ObjectId
+  projects          Project[] @relation(fields: [projectIDs], references: [project_id])
+  quizzesIDs String  @unique @db.ObjectId
+  quizz Quizze[] @relation(fields: [projectIDs], references: [project_id])
+}
+
+// model projet
+model Project {
+  project_id  String    @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  description String?
+  studentIDs  String[]  @db.ObjectId
+  students    Student[] @relation(fields: [studentIDs], references: [student_id])
+}
+
+// Model certifications
+model Certifications {
+  certification_id String @id @default(auto()) @map("_id") @db.ObjectId
+  title            String
+  description      String
+  date_issued      String
+}
+
+// Model cours
+model course {
+  course_id   String @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  description String
+  content     String
+  quizzes     String
+  exercices   String
+  price       String
+}
+
+// model quizzes
+model Quizze {
+  quiz_id       String @id @default(auto()) @map("_id") @db.ObjectId
+  questions     String
+  passing_score String
+  //
+}
+
+// model exercices
+model Exercices {
+  exercice_id String @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  description String
+  due_date    String
+  submissions String
+  //
 }
 
 // Model facture
@@ -47,22 +97,17 @@ model facture {
   amount     Int
   status     String
   due_date   DateTime
-}
-
-// model projet
-model Projet {
-  projet_id   String  @id @default(auto()) @map("_id") @db.ObjectId
-  title       String
-  description String?
+  //
 }
 
 // enumerations lists
 enum Role {
   SUPERADMIN
   ADMIN
-  USER 
+  USER
   STUDENT
 }
+
 enum Status {
   STUDENT
   PROFESSIONAL
@@ -70,8 +115,8 @@ enum Status {
 }
 
 // types lists
-type Tutor{
+type Tutor {
   mother String
   father String
-  other String
+  other  String
 }

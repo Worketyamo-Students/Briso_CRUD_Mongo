@@ -2,6 +2,7 @@ import { Request,Response } from "express";
 import { HttpCode } from "../core/constants";
 import {PrismaClient } from "@prisma/client";
 import bcrypt from 'bcrypt'
+import sendMail from "../core/config/send.mail";
 //import jwt from 'jwt'
 
 import chalk from "chalk"
@@ -70,6 +71,7 @@ const Contolleurs = {
                     role
                 }
             })
+            sendMail(user.email)
             res.json({"message": "element successfully created"})
             console.log(user)
         } catch (error) {
