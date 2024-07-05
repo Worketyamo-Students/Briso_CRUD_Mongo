@@ -24,7 +24,6 @@ model User {
 // model apprenants
 model Student {
   student_id        String    @id @default(auto()) @map("_id") @db.ObjectId
-  quizzes           String
   courses           String?
   exercises         String
   certifications    String
@@ -37,12 +36,15 @@ model Student {
   tutor             String
   school_level      String
   status            Status
+  // one-one relation with user
   user              User      @relation(fields: [userId], references: [user_id])
   userId            String    @unique @db.ObjectId
-  projectIDs        String[]  @db.ObjectId
+  // many-many relation with project
   projects          Project[] @relation(fields: [projectIDs], references: [project_id])
-  quizzesIDs String  @unique @db.ObjectId
-  quizz Quizze[] @relation(fields: [projectIDs], references: [project_id])
+  projectIDs        String[]  @db.ObjectId
+  // many-many relation with quiz
+  quizz             Quizze[]  @relation(fields: [quizzeIDs], references: [quiz_id])
+  quizzeIDs         String[]  @db.ObjectId
 }
 
 // model projet
@@ -50,6 +52,7 @@ model Project {
   project_id  String    @id @default(auto()) @map("_id") @db.ObjectId
   title       String
   description String?
+  // one-one relation with student
   studentIDs  String[]  @db.ObjectId
   students    Student[] @relation(fields: [studentIDs], references: [student_id])
 }
@@ -78,7 +81,9 @@ model Quizze {
   quiz_id       String @id @default(auto()) @map("_id") @db.ObjectId
   questions     String
   passing_score String
-  //
+  // many-many relation with student
+  student Student[] @relation(fields: [studentIDs],references: [student_id])
+  studentIDs    String[] @db.ObjectId
 }
 
 // model exercices
