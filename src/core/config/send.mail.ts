@@ -17,8 +17,8 @@ const transporter = nodemailer.createTransport({
 const mailOptions = {
     from: "kouambrice10@gmail.com",
     to: email,
-    subject: "AWS certification Exam",
-    text: "Hello,you are just from passing your AWS Certification result,you can check",
+    subject: "My Test",
+    text: "Hello you there,awesome to tell you that i realise the programatic sending of mails.",
 };
 // sending the mail
 transporter.sendMail(mailOptions, (error, info) => {
