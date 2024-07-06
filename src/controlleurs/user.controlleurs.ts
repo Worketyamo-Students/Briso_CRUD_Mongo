@@ -41,7 +41,7 @@ const Contolleurs = {
             })
             if(find){
                 res.json(find).status(HttpCode.OK)
-                console.log(chalk.blueBright("Element successfully retrieved"))
+                console.log(chalk.blueBright("user successfully retrieved"))
             }else res.send({"message" : "User not found"})
         } catch (error) {
             console.error(chalk.red(error))
@@ -72,7 +72,7 @@ const Contolleurs = {
                 }
             })
             sendMail(user.email)
-            res.json({"message": "element successfully created"})
+            res.json({"message": "user successfully created"})
             console.log(user)
         } catch (error) {
             console.error(chalk.red(error))
@@ -95,7 +95,7 @@ const Contolleurs = {
                 },
             })
             if(updateUser){
-                res.json({"message": "element successfully modify"})
+                res.json({"message": "user's info successfully modify"})
                 console.log(updateUser)
             }
             else
@@ -115,7 +115,7 @@ const Contolleurs = {
                 },
             })
             if(deleteUser)
-                res.json({"message": "element successfully deleted"})
+                res.json({"message": "user successfully deleted"})
             else
                  console.error("not working")
         } catch (error) {

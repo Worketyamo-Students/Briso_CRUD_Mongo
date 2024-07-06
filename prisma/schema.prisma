@@ -26,14 +26,12 @@ model User {
 // model apprenants
 model Student {
   student_id        String           @id @default(auto()) @map("_id") @db.ObjectId
-  courses           String?
-  exercises         String
-  matricule         String           @unique
+  matricule         String?           @unique
   cni               String
   address           String
-  photo             String
-  phone             String?
-  registration_date String
+  photo             String?
+  phone             String
+  registration_date DateTime         @default(now())
   tutor             String
   school_level      String
   school            String?
@@ -51,7 +49,7 @@ model Student {
   certifications    Certifications[] @relation(fields: [certificationId], references: [certification_id])
   certificationId   String[]         @db.ObjectId
   // many-many relation with exercices
-  exercices         Exercices[]      @relation(fields: [exerciceIDs], references: [exercice_id])
+  exercises         Exercices[]      @relation(fields: [exerciceIDs], references: [exercice_id])
   exerciceIDs       String[]         @db.ObjectId
   // many-many relation with cours
   cours             Course[]         @relation(fields: [coursIDs], references: [course_id])
