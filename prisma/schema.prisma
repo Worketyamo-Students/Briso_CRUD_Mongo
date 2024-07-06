@@ -12,13 +12,15 @@ datasource db {
 
 // Model users
 model User {
-  user_id   String   @id @default(auto()) @map("_id") @db.ObjectId
+  user_id   String    @id @default(auto()) @map("_id") @db.ObjectId
   name      String
-  email     String   @unique
+  email     String    @unique
   age       Int
   password  String
-  role      Role     @default(USER)
+  role      Role      @default(USER)
   apprenant Student?
+  // one-many relation with factures
+  factures  Facture[]
 }
 
 // model apprenants
@@ -43,7 +45,7 @@ model Student {
   projects          Project[]        @relation(fields: [projectIDs], references: [project_id])
   projectIDs        String[]         @db.ObjectId
   // many-many relation with quiz
-  quizz             Quizze[]         @relation(fields: [quizzeIDs], references: [quiz_id])
+  quizz             Quiz[]           @relation(fields: [quizzeIDs], references: [quiz_id])
   quizzeIDs         String[]         @db.ObjectId
   // many-many relation with certifications
   certifications    Certifications[] @relation(fields: [certificationId], references: [certification_id])
@@ -52,7 +54,7 @@ model Student {
   exercices         Exercices[]      @relation(fields: [exerciceIDs], references: [exercice_id])
   exerciceIDs       String[]         @db.ObjectId
   // many-many relation with cours
-  cours             Course[]          @relation(fields: [coursIDs], references: [course_id])
+  cours             Course[]         @relation(fields: [coursIDs], references: [course_id])
   coursIDs          String[]         @db.ObjectId
 }
 
@@ -79,47 +81,58 @@ model Certifications {
 
 // Model cours
 model Course {
-  course_id   String    @id @default(auto()) @map("_id") @db.ObjectId
+  course_id   String      @id @default(auto()) @map("_id") @db.ObjectId
   title       String
   description String
   content     String
   quizzes     String
-  exercices   String
   price       String
   // many-many relation with student
-  studentIDs  String[]  @db.ObjectId
-  students    Student[] @relation(fields: [studentIDs], references: [student_id])
+  studentIDs  String[]    @db.ObjectId
+  students    Student[]   @relation(fields: [studentIDs], references: [student_id])
+  // one-many relation with exercices
+  exercices   Exercices[]
+  // one-many relation with quizzes
+  quiz        Quiz[]
 }
 
 // model quizzes
-model Quizze {
-  quiz_id       String    @id @default(auto()) @map("_id") @db.ObjectId
-  questions     String
-  passing_score String
+model Quiz {
+  quiz_id         String    @id @default(auto()) @map("_id") @db.ObjectId
+  questions       String
+  passing_score   String
   // many-many relation with student
-  student       Student[] @relation(fields: [studentIDs], references: [student_id])
-  studentIDs    String[]  @db.ObjectId
+  student         Student[] @relation(fields: [studentIDs], references: [student_id])
+  studentIDs      String[]  @db.ObjectId
+  // one-many relation with courses
+  affected_quizID String    @db.ObjectId
+  affected_quiz   Course    @relation(fields: [affected_quizID], references: [course_id])
 }
 
 // model exercices
 model Exercices {
-  exercice_id String    @id @default(auto()) @map("_id") @db.ObjectId
-  title       String
-  description String
-  due_date    String
-  submissions String
+  exercice_id       String    @id @default(auto()) @map("_id") @db.ObjectId
+  title             String
+  description       String
+  due_date          String
+  submissions       String
   //many-many relation with student
-  studentIDs  String[]  @db.ObjectId
-  students    Student[] @relation(fields: [studentIDs], references: [student_id])
+  studentIDs        String[]  @db.ObjectId
+  students          Student[] @relation(fields: [studentIDs], references: [student_id])
+  // one-many relation with course
+  affected_courseID String    @db.ObjectId
+  affected_course   Course    @relation(fields: [affected_courseID], references: [course_id])
 }
 
 // Model facture
-model facture {
-  invoice_id String   @id @default(auto()) @map("_id") @db.ObjectId
-  amount     Int
-  status     String
-  due_date   DateTime
-  //
+model Facture {
+  invoice_id      String   @id @default(auto()) @map("_id") @db.ObjectId
+  amount          Int
+  status          String
+  due_date        DateTime
+  //one-many relation with users
+  affected_userID String   @db.ObjectId
+  affected_user   User     @relation(fields: [affected_userID], references: [user_id])
 }
 
 // enumerations lists
