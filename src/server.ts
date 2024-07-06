@@ -9,6 +9,7 @@ import { ONE_HUNDRED, SIXTY } from './core/constants';
 import routerProject from './routes/projets.routes';
 import routerUser from './routes/user.routes';
 import routerStudent from './routes/students.routes';
+import routerCertification from './routes/certifications.routes';
 
 const app = express();
 app.use(express.json());
@@ -26,7 +27,7 @@ app.use(morgan('combined'));
 app.use('/users',routerUser)
 app.use('/students',routerStudent)
 app.use('/projets',routerProject)
-// app.use('/certifications',routerCertification)
+app.use('/certifications',routerCertification)
 // app.use('/course',routerCourse)
 // app.use('/quiz',routerQuiz)
 // app.use('/exercices',routerExercice)

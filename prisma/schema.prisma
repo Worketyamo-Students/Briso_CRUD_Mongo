@@ -25,35 +25,35 @@ model User {
 
 // model apprenants
 model Student {
-  student_id        String           @id @default(auto()) @map("_id") @db.ObjectId
-  matricule         String?           @unique
+  student_id        String          @id @default(auto()) @map("_id") @db.ObjectId
+  matricule         String?         @unique
   cni               String
   address           String
   photo             String?
   phone             String
-  registration_date DateTime         @default(now())
+  registration_date DateTime        @default(now())
   tutor             String
   school_level      String
   school            String?
   status            Status
   // one-one relation with user
-  user              User             @relation(fields: [userId], references: [user_id])
-  userId            String           @unique @db.ObjectId
+  user              User            @relation(fields: [userId], references: [user_id])
+  userId            String          @unique @db.ObjectId
   // many-many relation with project
-  projects          Project[]        @relation(fields: [projectIDs], references: [project_id])
-  projectIDs        String[]         @db.ObjectId
+  projects          Project[]       @relation(fields: [projectIDs], references: [project_id])
+  projectIDs        String[]        @db.ObjectId
   // many-many relation with quiz
-  quizz             Quiz[]           @relation(fields: [quizzeIDs], references: [quiz_id])
-  quizzeIDs         String[]         @db.ObjectId
+  quizz             Quiz[]          @relation(fields: [quizzeIDs], references: [quiz_id])
+  quizzeIDs         String[]        @db.ObjectId
   // many-many relation with certifications
-  certifications    Certifications[] @relation(fields: [certificationId], references: [certification_id])
-  certificationId   String[]         @db.ObjectId
+  certifications    Certification[] @relation(fields: [certificationId], references: [certification_id])
+  certificationId   String[]        @db.ObjectId
   // many-many relation with exercices
-  exercises         Exercices[]      @relation(fields: [exerciceIDs], references: [exercice_id])
-  exerciceIDs       String[]         @db.ObjectId
+  exercises         Exercices[]     @relation(fields: [exerciceIDs], references: [exercice_id])
+  exerciceIDs       String[]        @db.ObjectId
   // many-many relation with cours
-  cours             Course[]         @relation(fields: [coursIDs], references: [course_id])
-  coursIDs          String[]         @db.ObjectId
+  cours             Course[]        @relation(fields: [coursIDs], references: [course_id])
+  coursIDs          String[]        @db.ObjectId
 }
 
 // model projet
@@ -67,9 +67,9 @@ model Project {
 }
 
 // Model certifications
-model Certifications {
+model Certification {
   certification_id String    @id @default(auto()) @map("_id") @db.ObjectId
-  title            String
+  title            String    @unique
   description      String
   date_issued      String
   //many-many relation with student

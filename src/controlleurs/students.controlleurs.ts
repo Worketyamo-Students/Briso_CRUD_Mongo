@@ -37,16 +37,18 @@ const Contolleurs = {
     },
     createStudent: async (req: Request, res: Response) => {
         try {
-            const {cni, address, phone, tutor, school_level, status } = req.body
+            const {cni, address, phone, tutor, school_level, status,userId } = req.body
 
             const student = await prisma.student.create({
+                // need to be fixed while taking into account other fieelds
                  data: {
                     cni,
                     address,
                     phone,
                     tutor,
                     school_level,
-                    status
+                    status,
+                    userId
                 }
             })
             res.json({ "message": "student successfully created" })
