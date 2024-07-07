@@ -37,27 +37,26 @@ const Contolleurs = {
     },
     createCertification: async (req: Request, res: Response) => {
         try {
-            const {title,description,date_issued,studentIDs} = req.body
-
-            const student = await prisma.student.create({
-                // need to be fixed while taking into account other fields
-                 data: {
+            const { title, description, date_issued } = req.body
+            const newCertification = prisma.certification.create({
+                data: {
                     title,
                     description,
-                    date_issued,
-                    studentIDs
+                    date_issued
                 }
             })
-            res.json({ "message": "student successfully created" })
-            console.log(student)
+            if (newCertification) {
+                res.json(newCertification).status(HttpCode.CREATED)
+                console.log(chalk.blueBright("Project successfully created"))
+            } else res.send({ msg: "could not create certification" })
         } catch (error) {
-            console.error(chalk.red(error))
+            console.log(error)
         }
     },
     modifyCertification: async (req: Request, res: Response) => {
         try {
             const { id } = req.params
-            const {title,description,date_issued } = req.body
+            const { title, description, date_issued } = req.body
             const updateCertification = await prisma.certification.update({
                 where: {
                     certification_id: id
@@ -72,9 +71,7 @@ const Contolleurs = {
                 res.json({ "message": "student's info successfully modify" })
                 console.log(updateCertification)
             }
-            else
-                console.log("not working")
-            console.error("not working")
+            else res.send({ msg: "could not create certification" })
         } catch (error) {
             console.error(chalk.red(error))
         }
@@ -90,8 +87,7 @@ const Contolleurs = {
             })
             if (deleteCertification)
                 res.json({ "message": "student successfully deleted" })
-            else
-                console.error("not working")
+            else res.send({ msg: "could not create certification" })
         } catch (error) {
             console.error(chalk.red(error))
         }

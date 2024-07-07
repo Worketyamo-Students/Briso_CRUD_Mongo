@@ -18,7 +18,7 @@ model User {
   age       Int
   password  String
   role      Role      @default(USER)
-  apprenant Student?
+  student Student?
   // one-many relation with factures
   factures  Facture[]
 }

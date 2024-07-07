@@ -1,88 +1,87 @@
-import { Request,Response } from "express";
+import { Request, Response } from "express";
 import { HttpCode } from "../core/constants";
-import {PrismaClient } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 import chalk from "chalk"
 
 const prisma = new PrismaClient()
 
 // creation of objects of functions
 const Contolleurs = {
-    getallProjects : async (req:Request,res:Response)=>{
+    getallProjects: async (req: Request, res: Response) => {
         try {
-            const projets = await prisma.projet.findMany()
+            const projets = await prisma.project.findMany()
             res.send(projets).status(HttpCode.OK)
         } catch (error) {
             console.error(chalk.red(error))
         }
     },
-    getoneProject : async (req:Request,res:Response)=>{
-        const {id} = req.params
+    getoneProject: async (req: Request, res: Response) => {
+        const { id } = req.params
         try {
-            const find = await prisma.projet.findUnique({
+            const find = await prisma.project.findUnique({
                 where: {
-                    projet_id : id 
+                    project_id: id
                 }
             })
-            if(find){
+            if (find) {
                 res.json(find).status(HttpCode.OK)
-                console.log(chalk.blueBright("Element successfully retrieved"))
+                console.log(chalk.blueBright("Project successfully retrieved"))
             }
         } catch (error) {
             console.error(chalk.red(error))
         }
     },
-    createProject : async (req:Request,res:Response)=>{
+    createProject: async (req: Request, res: Response) => {
         try {
-            const {title,description} = req.body
-            const projet = await prisma.projet.create({
-                data : {
+            const { title, description } = req.body
+            const project = await prisma.project.create({
+                data: {
                     title,
                     description,
                 }
             })
-            await res.json(projet).status(HttpCode.CREATED);
-            console.log(chalk.blueBright("Element successfully created"))
+            if (project) {
+                res.json(project).status(HttpCode.CREATED);
+                console.log(chalk.blueBright("Project successfully created"))
+            } else res.send({ msg: "could not create certification" })
         } catch (error) {
             console.error(chalk.red(error))
         }
     },
-    modifyProject : async (req: Request,res : Response)=>{
+    modifyProject: async (req: Request, res: Response) => {
         try {
-            const {id} = req.params
-            const {title,description} = req.body
-            const updateProjet = await prisma.projet.update({
-                where : {
-                    projet_id : id
+            const { id } = req.params
+            const { title, description } = req.body
+            const updateProject = await prisma.project.update({
+                where: {
+                    project_id: id
                 },
-                data : {
+                data: {
                     title,
-                    description                    
+                    description
                 },
             })
-            if(updateProjet){
-                await res.json(updateProjet).status(HttpCode.OK)
-                console.log(chalk.blueBright("Element successfully updated"))
+            if (updateProject) {
+                res.json(updateProject).status(HttpCode.OK)
+                console.log(chalk.blueBright("Project successfully updated"))
             }
-            else
-                console.log("not working")
-                await console.error("not working")          
+            else res.send({ msg: "could not create certification" })
         } catch (error) {
             console.error(chalk.red(error))
         }
     },
-    deleteoneProject : async (req: Request,res : Response)=>{
+    deleteoneProject: async (req: Request, res: Response) => {
         try {
-            const {id} = req.params
-            
-            const deleteProjet = await prisma.projet.delete({
-                where : {
-                    projet_id : id
+            const { id } = req.params
+
+            const deleteProjet = await prisma.project.delete({
+                where: {
+                    project_id: id
                 },
             })
-            if(deleteProjet)
-                await res.json("successfully deleted").status(HttpCode.OK)
-            else
-                await console.error("not working")
+            if (deleteProjet)
+                res.json("Project successfully deleted").status(HttpCode.OK)
+            else res.send({ msg: "could not create certification" })
         } catch (error) {
             console.error(chalk.red(error))
         }

@@ -1,7 +1,7 @@
 import { envs } from "./env";
 import nodemailer from 'nodemailer'
 
-const sendMail =  (email:string) =>{
+const sendMail =  (email:string,subject:string,msg:string) =>{
 // configuring nodemailer
 const transporter = nodemailer.createTransport({
     service: "Gmail",
@@ -17,8 +17,9 @@ const transporter = nodemailer.createTransport({
 const mailOptions = {
     from: "kouambrice10@gmail.com",
     to: email,
-    subject: "My Test",
-    text: "Hello you there,awesome to tell you that i realise the programatic sending of mails.",
+    subject: subject,
+    text: msg,
+    //html : test
 };
 // sending the mail
 transporter.sendMail(mailOptions, (error, info) => {
