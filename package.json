@@ -46,6 +46,7 @@
 		"@types/chalk": "^2.2.0",
 		"@types/jsonwebtoken": "9.0.2",
 		"@types/morgan": "^1.9.9",
+		"@types/otp-generator": "^4.0.2",
 		"compression": "^1.7.4",
 		"dotenv": "^16.4.5",
 		"env-var": "^7.5.0",
@@ -53,6 +54,7 @@
 		"express-rate-limit": "^7.3.1",
 		"jsonwebtoken": "9.0.2",
 		"morgan": "^1.10.0",
+		"otp-generator": "^4.0.1",
 		"prisma": "^5.16.1",
 		"swagger-jsdoc": "^6.2.8",
 		"swagger-ui-express": "^5.0.1"

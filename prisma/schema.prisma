@@ -12,15 +12,16 @@ datasource db {
 
 // Model users
 model User {
-  user_id   String    @id @default(auto()) @map("_id") @db.ObjectId
-  name      String
-  email     String    @unique
-  age       Int
-  password  String
-  role      Role      @default(USER)
-  student Student?
+  user_id  String    @id @default(auto()) @map("_id") @db.ObjectId
+  name     String
+  email    String    @unique
+  age      Int
+  password String
+  role     Role      @default(USER)
+  otp      OTP?
+  student  Student?
   // one-many relation with factures
-  factures  Facture[]
+  factures Facture[]
 }
 
 // model apprenants
@@ -152,4 +153,11 @@ type Tutor {
   mother String
   father String
   other  String
+}
+
+// types otp
+type OTP {
+  code        Int
+  expired     Boolean
+  expiry_date DateTime
 }

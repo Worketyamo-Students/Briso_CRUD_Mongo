@@ -12,7 +12,8 @@ export const envs = {
 	MONGO_DB_NAME: get('MONGO_DB_NAME').default('worketyamo').asString(),
 	GMAIL_PASSWORD : "pkar mlbr gnof uqca",
 	//GMAIL_EMAIL : 
-	JWT_TOCKEN : get('JWT_TOCKEN')
+	JWT_ACCESS_TOKEN : get('JWT_ACESS_TOKEN'),
+	JWT_REFRESH_TOKEN : get('JWT_REFRESH_TOKEN')
 };
 
 // Implementing regex:
@@ -21,7 +22,10 @@ export const regex= {
     PASSWORD_REGEX : /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
     testRegex : (email:string):boolean =>{
                     return regex.EMAIL_REGEX.test(email)
-    }
+    },
+	testRegex2 : (password:string):boolean =>{
+		return regex.PASSWORD_REGEX.test(password)
+}
 }
 
 export const CONNECTION_STRING = `mongodb://${envs.MONGO_INITDB_ROOT_USERNAME}:${envs.MONGO_INITDB_ROOT_PASSWORD}@172.28.0.2:27017/${envs.MONGO_DB_NAME}?authSource=admin`;
