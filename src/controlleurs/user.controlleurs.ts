@@ -25,7 +25,7 @@ const Contolleurs = {
     },
     createUser: async (req: Request, res: Response) => {
         try {
-            const { name, email, password,role } = req.body
+            const { name, email, password, role } = req.body
 
             // validating user's input
             if (!name || !email || !password)
@@ -195,12 +195,15 @@ const Contolleurs = {
             sendError(res, error)
         }
     },
-    // RegisterUser : async(req:Request, res:Response) =>{
-    //     try {
-    //          //utilisez pour creer un otp
-    //     } catch (error) {
-    //         console.error(chalk.red(error))
-    //     }
-    // }
+    // function that directly load a user in plateform
+    registerUser: async (res: Response) => {
+        try {
+            res.json({ msg: "welcome to worketyamo's plateform" }).status(HttpCode.OK)
+            chalk.blueBright(console.log("A user has connecter"))
+        } catch (error) {
+            console.error(chalk.red(error))
+        }
+    }
 }
+
 export default Contolleurs;

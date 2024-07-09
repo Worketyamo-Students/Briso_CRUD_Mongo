@@ -29,10 +29,10 @@ app.use(cookieParser());
 app.use(helmet())
 
 // middleware tables
-app.use('/users',routerUser)
-app.use('/students',routerStudent)
-app.use('/projets',routerProject)
-app.use('/certifications',routerCertification)
+app.use('/users', routerUser)
+app.use('/students', routerStudent)
+app.use('/projets', routerProject)
+app.use('/certifications', routerCertification)
 // app.use('/course',routerCourse)
 // app.use('/quiz',routerQuiz)
 // app.use('/exercices',routerExercice)
