@@ -10,6 +10,7 @@ import routerProject from './routes/projets.routes';
 import routerUser from './routes/user.routes';
 import routerStudent from './routes/students.routes';
 import routerCertification from './routes/certifications.routes';
+import cookieParser from 'cookie-parser';
 import helmet from 'helmet'
 
 const app = express();
@@ -24,6 +25,7 @@ app.use(
 	})
 );
 app.use(morgan('combined'));
+app.use(cookieParser());
 app.use(helmet())
 
 // middleware tables

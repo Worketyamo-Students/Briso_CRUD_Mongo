@@ -8,6 +8,7 @@ import chalk from "chalk"
 import sendMail from "../core/config/send.mail";
 import { otpGenerate } from "../core/config/otp_generator";
 import tokenOps from "../core/config/tocken.function";
+//import cookieParser from "cookie-parser";
 
 
 const prisma = new PrismaClient()
@@ -177,7 +178,6 @@ const Contolleurs = {
                 const testPass = await bcrypt.compare(password, user.password)
                 if (testPass) {
                     const token = tokenOps.createToken(user)
-                    console.log(token)
                     user.password = ""
                     res.cookie("Briso's connection", token, { httpOnly: true, secure: true })
                     res.json({ msg: "User successfully logged in"}).status(HttpCode.OK)
@@ -186,6 +186,28 @@ const Contolleurs = {
             } else console.log(chalk.red("No user found"))
         } catch (error) {
             sendError(res, error)
+        }
+    },
+    refreshToken : async(req:Request,res:Response) =>{
+        try {
+            const {id} = req.params
+            
+            const user = await prisma.user.findFirst({
+                where: {
+                    user_id: id
+                },
+            })
+            //const refreshToken = cookieParser.signedCookie(user,secret)
+            const refreshToken = tokenOps.createToken(user)
+            const decodedPayload = tokenOps.decodeAccessToken(refreshToken)
+            if(decodedPayload && 'email' in decodedPayload){
+                res.cookie("Briso's connection", refreshToken, { httpOnly: true, secure: true })
+                res.json({ msg: "Welcome back to worketyamo's plateform" }).status(HttpCode.OK)
+                const payloadEmail = decodedPayload.email;
+                console.log(payloadEmail);              
+            }
+        } catch (error) {
+            sendError(res,error)
         }
     },
     // RegisterUser : async(req:Request, res:Response) =>{

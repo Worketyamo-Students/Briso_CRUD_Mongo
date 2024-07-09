@@ -8,7 +8,8 @@ const routerUser = Router()
 // GET method 1
 routerUser.get("/",Contolleurs.getallUsers)
 // GET method 2
-routerUser.get("/query/:id",Contolleurs.getoneUser)
+routerUser.get("/query/:id",Contolleurs.getoneUser) //getting a user
+routerUser.get("/refresh/:id",Contolleurs.refreshToken) //refresh a token
 // CREATE method
 routerUser.post("/",Contolleurs.createUser) //creation of users
 routerUser.post("/otp-verification", Contolleurs.verifyOTP) //verification through otp
