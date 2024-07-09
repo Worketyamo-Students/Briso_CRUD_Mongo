@@ -37,11 +37,12 @@ const Contolleurs = {
     },
     createStudent: async (req: Request, res: Response) => {
         try {
-            const {cni, address, phone, tutor, school_level, status,userId } = req.body
+            const {age,cni, address, phone, tutor, school_level, status,userId } = req.body
 
             const student = await prisma.student.create({
                 // need to be fixed while taking into account other fieelds
                  data: {
+                    age,
                     cni,
                     address,
                     phone,
@@ -60,12 +61,13 @@ const Contolleurs = {
     modifyStudent: async (req: Request, res: Response) => {
         try {
             const { id } = req.params
-            const {cni, address, phone, tutor, school_level, status } = req.body
+            const {age,cni, address, phone, tutor, school_level, status } = req.body
             const updateStudent = await prisma.student.update({
                 where: {
                     student_id: id
                 },
                 data: {
+                    age,
                     cni,
                     address,
                     phone,

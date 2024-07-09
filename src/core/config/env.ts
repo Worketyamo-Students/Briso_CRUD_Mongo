@@ -20,12 +20,9 @@ export const envs = {
 export const regex= {
     EMAIL_REGEX : /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/,
     PASSWORD_REGEX : /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-    testRegex : (email:string):boolean =>{
-                    return regex.EMAIL_REGEX.test(email)
-    },
-	testRegex2 : (password:string):boolean =>{
-		return regex.PASSWORD_REGEX.test(password)
-}
+    testRegex : (regexo:RegExp,prop:string):boolean =>{
+                    return regexo.test(prop)
+    }
 }
 
 export const CONNECTION_STRING = `mongodb://${envs.MONGO_INITDB_ROOT_USERNAME}:${envs.MONGO_INITDB_ROOT_PASSWORD}@172.28.0.2:27017/${envs.MONGO_DB_NAME}?authSource=admin`;

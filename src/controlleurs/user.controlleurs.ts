@@ -5,6 +5,7 @@ import bcrypt from 'bcrypt'
 import sendError from "../core/constants/errors";
 import chalk from "chalk"
 import { regex } from "../core/config/env";
+import sendMail from "../core/config/send.mail";
 import { otpGenerate } from "../core/config/otp_generator";
 
 const prisma = new PrismaClient()
@@ -16,7 +17,7 @@ const Contolleurs = {
             const users = await prisma.user.findMany()
             res.send(users).status(HttpCode.OK)
         } catch (error) {
-            sendError(res,error)
+            sendError(res, error)
         }
     },
     getoneUser: async (req: Request, res: Response) => {
@@ -32,45 +33,49 @@ const Contolleurs = {
                 console.log(chalk.blueBright("user successfully retrieved"))
             } else res.send({ "message": "User not found" })
         } catch (error) {
-            sendError(res,error)
+            sendError(res, error)
         }
     },
     createUser: async (req: Request, res: Response) => {
         try {
-            const { name, email, age, password } = req.body
+            const { name, email, password,otp } = req.body
+            
             // validating user's input
-             if(!name || !email || !password)
-                 res.status(HttpCode.BAD_REQUEST).json({"msg": "veillez remplir ces champs"})
+            if (!name || !email || !password)
+                res.status(HttpCode.BAD_REQUEST).json({ "msg": "veillez remplir ces champs" })
             // validating input data
-            const corectMail = regex.testRegex(email)
-            const correctPass = regex.testRegex2(password)
-            if(!corectMail) res.json({msg: "Veillez respectez le format d'email demander"})
-            if(!correctPass) res.json({msg: "Veillez respectez le format du mot de passe demander"})
+            // const validateMail = regex.testRegex(regex.EMAIL_REGEX, email)
+            // const validatePass = regex.testRegex(regex.PASSWORD_REGEX, password)
+            // if (!validateMail || !validatePass) res.json({ msg: "Veillez entrez des informations valides" })
+
             // hashing the password
-            const passHash = await bcrypt.hash(password, 10)
+            const passHash = await bcrypt.hash(password, 12)
 
             const user = await prisma.user.create({
                 data: {
                     name,
                     email,
-                    age,
-                    password : passHash,
+                    password: passHash,
+                    otp 
                 },
             })
-            const otp = parseInt(otpGenerate())
-            //sendMail(email, "This is an anonymous connection!", `Here is your code of validation: ${otp}`)
             if (user) {
-                res.json({ "message": "user successfully created" })
-                console.log(user)
+                if (user.otp != null) {
+                    const code = parseInt(otpGenerate())
+                    sendMail(email, "This is an anonymous connection!", `<h1 style=color:blue>Here is your code of validation :</h1> ${code}`)
+                    res.json({ "message": "user successfully created" })
+                    user.otp.code = code
+                    console.log(user)
+                }else console.log("otp null")
             } else res.send({ msg: "could not create user" })
         } catch (error) {
-           sendError(res,error)
+            sendError(res, error)
         }
     },
     modifyUser: async (req: Request, res: Response) => {
         try {
             const { id } = req.params
-            const { name, email, age, password, role } = req.body
+            const { name, email, password, role } = req.body
             const updateUser = await prisma.user.update({
                 where: {
                     user_id: id
@@ -78,7 +83,6 @@ const Contolleurs = {
                 data: {
                     name,
                     email,
-                    age,
                     password,
                     role
                 },
@@ -89,7 +93,7 @@ const Contolleurs = {
             }
             else res.send({ msg: "could not create certification" })
         } catch (error) {
-            sendError(res,error)
+            sendError(res, error)
         }
     },
     deleteoneUser: async (req: Request, res: Response) => {
@@ -105,7 +109,7 @@ const Contolleurs = {
                 res.json({ "message": "user successfully deleted" })
             else res.send({ msg: "could not create certification" })
         } catch (error) {
-            console.error(chalk.red(error))
+            sendError(res, error)
         }
     },
     deleteUsers: async (req: Request, res: Response) => {
@@ -118,20 +122,43 @@ const Contolleurs = {
             console.error(chalk.red(error))
         }
     },
-    // verifyOTP : async(req:Request, res:Response) =>{
-    //     try {
-    //          //
-    //     } catch (error) {
-    //         console.error(chalk.red(error))
-    //     }
-    // },
+    verifyOTP: async (req: Request, res: Response) => {
+        const { otp, email } = req.body
+
+        const user = await prisma.user.findFirst({
+            where: {
+                email
+            },
+        })
+        if (user != null) {
+            const date = new Date().toISOString()
+            if (user.otp != null) {
+                if (user.otp.expiry_date.toISOString() < date) return res.json({ msg: "OTP code expired" }).status(HttpCode.UNAUTHORIZED)
+
+                if (user.otp?.code === otp && !user.otp?.expired) {
+                    const userUpdate = await prisma.user.update({
+                        where: {
+                            user_id: user.user_id
+                        },
+                        data: {
+                            otp: null
+                        }
+                    });
+                    return res.json({ msg: 'OTP verified successfully' })
+                    console.log(userUpdate)
+                }
+            } else console.log("no otp registered")
+        } else {
+            return res.json({ msg: "User's email not corresponding" }).status(HttpCode.NO_CONTENT)
+        }
+    },
     // loginUser : async(req:Request, res:Response) =>{
     //     try {
     //          //
     //     } catch (error) {
     //         console.error(chalk.red(error))
     //     }
-    // }
+    // },
     // RegisterUser : async(req:Request, res:Response) =>{
     //     try {
     //          //utilisez pour creer un otp
