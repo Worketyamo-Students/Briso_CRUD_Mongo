@@ -4,9 +4,10 @@ import { PrismaClient } from "@prisma/client";
 import bcrypt from 'bcrypt'
 import sendError from "../core/constants/errors";
 import chalk from "chalk"
-import { regex } from "../core/config/env";
+//import { regex } from "../core/config/env";
 import sendMail from "../core/config/send.mail";
 import { otpGenerate } from "../core/config/otp_generator";
+import tokenOps from "../core/config/tocken.function";
 
 
 const prisma = new PrismaClient()
@@ -63,7 +64,7 @@ const Contolleurs = {
             })
             const updateUser = await prisma.user.update({
                 where: {
-                    email:user.email
+                    email: user.email
                 },
                 data: {
                     code_otp,
@@ -74,7 +75,7 @@ const Contolleurs = {
                 sendMail(email, "This is an anonymous connection!", `<h1 style=color:blue>Here is your code of validation :</h1> ${code_otp}`)
                 res.json({ "message": "user successfully created" })
                 console.log(updateUser)
-            }else res.send({ msg: "could not create user" })
+            } else res.send({ msg: "could not create user" })
         } catch (error) {
             sendError(res, error)
         }
@@ -141,8 +142,8 @@ const Contolleurs = {
             if (user != null) {
                 const actual_time = new Date(Date.now() + 5 * 60 * 1000).toISOString()
                 if (user.code_otp != null) {
-                    if ( user.otpExpiredAt.toISOString() < actual_time) return res.json({ msg: "OTP code expired" }).status(HttpCode.UNAUTHORIZED)
-    
+                    if (user.otpExpiredAt.toISOString() < actual_time) return res.json({ msg: "OTP code expired" }).status(HttpCode.UNAUTHORIZED)
+
                     if (user.code_otp === code_otp) {
                         const userUpdate = await prisma.user.update({
                             where: {
@@ -160,16 +161,33 @@ const Contolleurs = {
                 return res.json({ msg: "User's email not corresponding" }).status(HttpCode.NO_CONTENT)
             }
         } catch (error) {
-            sendError(res,error)
+            sendError(res, error)
         }
     },
-    // loginUser : async(req:Request, res:Response) =>{
-    //     try {
-    //          //
-    //     } catch (error) {
-    //         console.error(chalk.red(error))
-    //     }
-    // },
+    loginUser: async (req: Request, res: Response) => {
+        const { email, password } = req.body
+
+        try {
+            const user = await prisma.user.findFirst({
+                where: {
+                    email
+                },
+            })
+            if (user != null) {
+                const testPass = await bcrypt.compare(password, user.password)
+                if (testPass) {
+                    const token = tokenOps.createToken(user)
+                    console.log(token)
+                    user.password = ""
+                    res.cookie("Briso's connection", token, { httpOnly: true, secure: true })
+                    res.json({ msg: "User successfully logged in"}).status(HttpCode.OK)
+                    console.log(user)
+                } else res.send("Wrong password entered,retry again")
+            } else console.log(chalk.red("No user found"))
+        } catch (error) {
+            sendError(res, error)
+        }
+    },
     // RegisterUser : async(req:Request, res:Response) =>{
     //     try {
     //          //utilisez pour creer un otp

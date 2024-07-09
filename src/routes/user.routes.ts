@@ -10,9 +10,9 @@ routerUser.get("/",Contolleurs.getallUsers)
 // GET method 2
 routerUser.get("/query/:id",Contolleurs.getoneUser)
 // CREATE method
-routerUser.post("/",Contolleurs.createUser)
+routerUser.post("/",Contolleurs.createUser) //creation of users
 routerUser.post("/otp-verification", Contolleurs.verifyOTP) //verification through otp
-//routerUser.post("/login", Contolleurs.loginUser) //login user
+routerUser.post("/login", Contolleurs.loginUser) //login of users
 // UPDATE method
 routerUser.put("/:id",Contolleurs.modifyUser)
 // DELETE method 1
