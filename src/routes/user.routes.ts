@@ -1,14 +1,13 @@
 import { Router } from "express";
 import Contolleurs from "../controlleurs/user.controlleurs";
+import middleware from "../middleware/middleware.mid";
 
 const routerUser = Router()
 
 // CRUD Operations:
 
 // GET method 1
-routerUser.get("/",Contolleurs.getallUsers)
-// GET method 2
-routerUser.get("/query/:id",Contolleurs.getoneUser) //getting a user
+routerUser.get("/admin/:id",middleware.roleUser,Contolleurs.getallUsers) //geting all users if superadmin
 routerUser.get("/refresh/:id",Contolleurs.refreshToken) //refresh a token
 // CREATE method
 routerUser.post("/",Contolleurs.createUser) //creation of users

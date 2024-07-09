@@ -23,25 +23,9 @@ const Contolleurs = {
             sendError(res, error)
         }
     },
-    getoneUser: async (req: Request, res: Response) => {
-        const { id } = req.params
-        try {
-            const find = await prisma.user.findUnique({
-                where: {
-                    user_id: id
-                }
-            })
-            if (find) {
-                res.json(find).status(HttpCode.OK)
-                console.log(chalk.blueBright("user successfully retrieved"))
-            } else res.send({ "message": "User not found" })
-        } catch (error) {
-            sendError(res, error)
-        }
-    },
     createUser: async (req: Request, res: Response) => {
         try {
-            const { name, email, password } = req.body
+            const { name, email, password,role } = req.body
 
             // validating user's input
             if (!name || !email || !password)
@@ -61,6 +45,7 @@ const Contolleurs = {
                     name,
                     email,
                     password: passHash,
+                    role
                 },
             })
             const updateUser = await prisma.user.update({
@@ -180,7 +165,7 @@ const Contolleurs = {
                     const token = tokenOps.createToken(user)
                     user.password = ""
                     res.cookie("Briso's connection", token, { httpOnly: true, secure: true })
-                    res.json({ msg: "User successfully logged in"}).status(HttpCode.OK)
+                    res.json({ msg: "User successfully logged in" }).status(HttpCode.OK)
                     console.log(user)
                 } else res.send("Wrong password entered,retry again")
             } else console.log(chalk.red("No user found"))
@@ -188,10 +173,10 @@ const Contolleurs = {
             sendError(res, error)
         }
     },
-    refreshToken : async(req:Request,res:Response) =>{
+    refreshToken: async (req: Request, res: Response) => {
         try {
-            const {id} = req.params
-            
+            const { id } = req.params
+
             const user = await prisma.user.findFirst({
                 where: {
                     user_id: id
@@ -200,14 +185,14 @@ const Contolleurs = {
             //const refreshToken = cookieParser.signedCookie(user,secret)
             const refreshToken = tokenOps.createToken(user)
             const decodedPayload = tokenOps.decodeAccessToken(refreshToken)
-            if(decodedPayload && 'email' in decodedPayload){
+            if (decodedPayload && 'email' in decodedPayload) {
                 res.cookie("Briso's connection", refreshToken, { httpOnly: true, secure: true })
                 res.json({ msg: "Welcome back to worketyamo's plateform" }).status(HttpCode.OK)
                 const payloadEmail = decodedPayload.email;
-                console.log(payloadEmail);              
+                console.log(payloadEmail);
             }
         } catch (error) {
-            sendError(res,error)
+            sendError(res, error)
         }
     },
     // RegisterUser : async(req:Request, res:Response) =>{
