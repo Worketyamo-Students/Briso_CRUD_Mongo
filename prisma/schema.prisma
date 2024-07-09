@@ -16,8 +16,9 @@ model User {
   name     String
   email    String    @unique
   password String
+  code_otp Int?
+  otpExpiredAt DateTime?
   role     Role      @default(USER)
-  otp      OTP 
   student  Student?
   // one-many relation with factures
   factures Facture[]
@@ -156,8 +157,3 @@ type Tutor {
 }
 
 // types otp
-type OTP {
-  code        Int
-  expired     Boolean
-  expiry_date DateTime
-}

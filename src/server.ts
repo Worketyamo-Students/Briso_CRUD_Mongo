@@ -10,6 +10,7 @@ import routerProject from './routes/projets.routes';
 import routerUser from './routes/user.routes';
 import routerStudent from './routes/students.routes';
 import routerCertification from './routes/certifications.routes';
+import helmet from 'helmet'
 
 const app = express();
 app.use(express.json());
@@ -23,6 +24,8 @@ app.use(
 	})
 );
 app.use(morgan('combined'));
+app.use(helmet())
+
 // middleware tables
 app.use('/users',routerUser)
 app.use('/students',routerStudent)

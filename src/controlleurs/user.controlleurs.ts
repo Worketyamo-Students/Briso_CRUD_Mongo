@@ -8,6 +8,7 @@ import { regex } from "../core/config/env";
 import sendMail from "../core/config/send.mail";
 import { otpGenerate } from "../core/config/otp_generator";
 
+
 const prisma = new PrismaClient()
 
 // creation of objects of functions
@@ -38,8 +39,8 @@ const Contolleurs = {
     },
     createUser: async (req: Request, res: Response) => {
         try {
-            const { name, email, password,otp } = req.body
-            
+            const { name, email, password } = req.body
+
             // validating user's input
             if (!name || !email || !password)
                 res.status(HttpCode.BAD_REQUEST).json({ "msg": "veillez remplir ces champs" })
@@ -51,23 +52,29 @@ const Contolleurs = {
             // hashing the password
             const passHash = await bcrypt.hash(password, 12)
 
+            const code_otp = parseInt(otpGenerate())
+            const otpExpiredAt = new Date(Date.now() + 10 * 60 * 1000).toISOString()
             const user = await prisma.user.create({
                 data: {
                     name,
                     email,
                     password: passHash,
-                    otp 
+                },
+            })
+            const updateUser = await prisma.user.update({
+                where: {
+                    email:user.email
+                },
+                data: {
+                    code_otp,
+                    otpExpiredAt,
                 },
             })
             if (user) {
-                if (user.otp != null) {
-                    const code = parseInt(otpGenerate())
-                    sendMail(email, "This is an anonymous connection!", `<h1 style=color:blue>Here is your code of validation :</h1> ${code}`)
-                    res.json({ "message": "user successfully created" })
-                    user.otp.code = code
-                    console.log(user)
-                }else console.log("otp null")
-            } else res.send({ msg: "could not create user" })
+                sendMail(email, "This is an anonymous connection!", `<h1 style=color:blue>Here is your code of validation :</h1> ${code_otp}`)
+                res.json({ "message": "user successfully created" })
+                console.log(updateUser)
+            }else res.send({ msg: "could not create user" })
         } catch (error) {
             sendError(res, error)
         }
@@ -123,33 +130,37 @@ const Contolleurs = {
         }
     },
     verifyOTP: async (req: Request, res: Response) => {
-        const { otp, email } = req.body
+        const { code_otp, email } = req.body
 
-        const user = await prisma.user.findFirst({
-            where: {
-                email
-            },
-        })
-        if (user != null) {
-            const date = new Date().toISOString()
-            if (user.otp != null) {
-                if (user.otp.expiry_date.toISOString() < date) return res.json({ msg: "OTP code expired" }).status(HttpCode.UNAUTHORIZED)
-
-                if (user.otp?.code === otp && !user.otp?.expired) {
-                    const userUpdate = await prisma.user.update({
-                        where: {
-                            user_id: user.user_id
-                        },
-                        data: {
-                            otp: null
-                        }
-                    });
-                    return res.json({ msg: 'OTP verified successfully' })
-                    console.log(userUpdate)
-                }
-            } else console.log("no otp registered")
-        } else {
-            return res.json({ msg: "User's email not corresponding" }).status(HttpCode.NO_CONTENT)
+        try {
+            const user = await prisma.user.findFirst({
+                where: {
+                    email
+                },
+            })
+            if (user != null) {
+                const actual_time = new Date(Date.now() + 5 * 60 * 1000).toISOString()
+                if (user.code_otp != null) {
+                    if ( user.otpExpiredAt.toISOString() < actual_time) return res.json({ msg: "OTP code expired" }).status(HttpCode.UNAUTHORIZED)
+    
+                    if (user.code_otp === code_otp) {
+                        const userUpdate = await prisma.user.update({
+                            where: {
+                                email: user.email
+                            },
+                            data: {
+                                code_otp: null
+                            }
+                        });
+                        res.json({ msg: 'OTP verified successfully' })
+                        console.log(userUpdate)
+                    }
+                } else console.log("no otp registered")
+            } else {
+                return res.json({ msg: "User's email not corresponding" }).status(HttpCode.NO_CONTENT)
+            }
+        } catch (error) {
+            sendError(res,error)
         }
     },
     // loginUser : async(req:Request, res:Response) =>{
