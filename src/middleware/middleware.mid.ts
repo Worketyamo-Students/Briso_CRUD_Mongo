@@ -25,7 +25,7 @@ const middleware = {
     },
     verifyUser: async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const accessToken:string = req.headers.authorization
+            const accessToken = JSON.stringify(req.headers.authorization)
             const decodedPayload = tokenOps.decodeAccessToken(accessToken)
             if (decodedPayload && 'name,email,password' in decodedPayload) {
                 const user = await prisma.user.findFirst({
