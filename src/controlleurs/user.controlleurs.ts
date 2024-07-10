@@ -4,7 +4,7 @@ import { PrismaClient } from "@prisma/client";
 import bcrypt from 'bcrypt'
 import sendError from "../core/constants/errors";
 import chalk from "chalk"
-//import { regex } from "../core/config/env";
+import { regex } from "../core/config/env";
 import sendMail from "../core/config/send.mail";
 import { otpGenerate } from "../core/config/otp_generator";
 import tokenOps from "../core/config/tocken.function";
@@ -31,9 +31,9 @@ const Contolleurs = {
             if (!name || !email || !password)
                 res.status(HttpCode.BAD_REQUEST).json({ "msg": "veillez remplir ces champs" })
             // validating input data
-            // const validateMail = regex.testRegex(regex.EMAIL_REGEX, email)
-            // const validatePass = regex.testRegex(regex.PASSWORD_REGEX, password)
-            // if (!validateMail || !validatePass) res.json({ msg: "Veillez entrez des informations valides" })
+            const validateMail = regex.testRegex(regex.EMAIL_REGEX, email)
+            const validatePass = regex.testRegex(regex.PASSWORD_REGEX, password)
+            if (!validateMail || !validatePass) res.json({ msg: "Veillez entrez des informations valides" })
 
             // hashing the password
             const passHash = await bcrypt.hash(password, 12)

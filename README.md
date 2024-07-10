@@ -93,6 +93,6 @@ Contributions are welcome! Please open an issue or submit a pull request.
 
 Kouam Brice
 
-## Informations supplémentaires
+## Additional Informations
 
 For any questions or additional support, please contact the project maintainers.
