@@ -7,9 +7,8 @@ import chalk from "chalk"
 import { regex } from "../core/config/env";
 import sendMail from "../core/config/send.mail";
 import { otpGenerate } from "../core/config/otp_generator";
-import tokenOps from "../core/config/tocken.function";
-//import cookieParser from "cookie-parser";
-
+import tokenOps from "../core/config/jwt.function";
+import { validationResult } from 'express-validator'
 
 const prisma = new PrismaClient()
 
@@ -25,27 +24,33 @@ const Contolleurs = {
     },
     createUser: async (req: Request, res: Response) => {
         try {
-            const { name, email, password, role } = req.body
+            const errorValidation = (req: Request, res: Response) => {
+                const errors = validationResult(req)
+                if (errors.isEmpty()) {
+                    // in case request params meet the validation criteria
+                    return res.status(HttpCode.OK).json(errors.array())
+                }
+                res.status(HttpCode.UNPROCESSABLE_ENTITY).json({ errors: errors.array() })
+                console.log("errors found in user's entries")
+            }
+            errorValidation(req,res)
 
-            // validating user's input
-            if (!name || !email || !password)
-                res.status(HttpCode.BAD_REQUEST).json({ "msg": "veillez remplir ces champs" })
-            // validating input data
-            const validateMail = regex.testRegex(regex.EMAIL_REGEX, email)
-            const validatePass = regex.testRegex(regex.PASSWORD_REGEX, password)
-            if (!validateMail || !validatePass) res.json({ msg: "Veillez entrez des informations valides" })
-
+            const { name, email, password, otp } = req.body
             // hashing the password
             const passHash = await bcrypt.hash(password, 12)
 
             const code_otp = parseInt(otpGenerate())
-            const otpExpiredAt = new Date(Date.now() + 10 * 60 * 1000).toISOString()
+            const expiredAt = new Date(Date.now() + 10 * 60 * 1000)
             const user = await prisma.user.create({
                 data: {
                     name,
                     email,
                     password: passHash,
-                    role
+                    otp:{
+                        code: otp,
+                        expiredAt
+                    }
+                    
                 },
             })
             const updateUser = await prisma.user.update({
@@ -126,7 +131,7 @@ const Contolleurs = {
                 },
             })
             if (user != null) {
-                const actual_time = new Date(Date.now() + 5 * 60 * 1000).toISOString()
+                const actual_time = new Date(Date.now()).toISOString()
                 if (user.code_otp != null) {
                     if (user.otpExpiredAt.toISOString() < actual_time) return res.json({ msg: "OTP code expired" }).status(HttpCode.UNAUTHORIZED)
 
@@ -161,10 +166,11 @@ const Contolleurs = {
             })
             if (user != null) {
                 const testPass = await bcrypt.compare(password, user.password)
-                if (testPass) {
-                    const token = tokenOps.createToken(user)
+                if (testPass || user.code_otp == null) {
+                    //const accessToken = tokenOps.createToken(user)
+                    const refreshToken = tokenOps.createToken(user)
                     user.password = ""
-                    res.cookie("Briso's connection", token, { httpOnly: true, secure: true })
+                    res.cookie("Briso's connection", refreshToken, { httpOnly: true, secure: true })
                     res.json({ msg: "User successfully logged in" }).status(HttpCode.OK)
                     console.log(user)
                 } else res.send("Wrong password entered,retry again")
@@ -175,22 +181,15 @@ const Contolleurs = {
     },
     refreshToken: async (req: Request, res: Response) => {
         try {
-            const { id } = req.params
-
-            const user = await prisma.user.findFirst({
-                where: {
-                    user_id: id
-                },
-            })
-            //const refreshToken = cookieParser.signedCookie(user,secret)
-            const refreshToken = tokenOps.createToken(user)
-            const decodedPayload = tokenOps.decodeAccessToken(refreshToken)
-            if (decodedPayload && 'email' in decodedPayload) {
-                res.cookie("Briso's connection", refreshToken, { httpOnly: true, secure: true })
-                res.json({ msg: "Welcome back to worketyamo's plateform" }).status(HttpCode.OK)
-                const payloadEmail = decodedPayload.email;
-                console.log(payloadEmail);
-            }
+            // const cookies = req.cookies....
+            // if(!cookie){
+            //     res.status().json()
+            // }
+            // const decodedPayload = tokenOps.decodeAccessToken(ca doit etre refreshToken)
+            // if(decodedPayload!==null){
+            //const {user_id} = verify
+            //...creer un user grace a prisma(en fonction du user_id) puis retirez le password si password est vide,creer un access token et faire un res.json a la fin
+            //}
         } catch (error) {
             sendError(res, error)
         }

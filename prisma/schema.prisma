@@ -16,8 +16,7 @@ model User {
   name     String
   email    String    @unique
   password String
-  code_otp Int?
-  otpExpiredAt DateTime?
+  otp OTP?
   role     Role      @default(USER)
   student  Student?
   // one-many relation with factures
@@ -134,7 +133,6 @@ model Facture {
   affected_userID String   @db.ObjectId
   affected_user   User     @relation(fields: [affected_userID], references: [user_id])
 }
-
 // enumerations lists
 enum Role {
   SUPERADMIN
@@ -142,18 +140,20 @@ enum Role {
   USER
   STUDENT
 }
-
+// status enumeration
 enum Status {
   STUDENT
   PROFESSIONAL
   OTHER
 }
-
 // types lists
 type Tutor {
   mother String
   father String
   other  String
 }
-
-// types otp
+//otp types
+type OTP{
+  code Int
+  expiredAt DateTime 
+}

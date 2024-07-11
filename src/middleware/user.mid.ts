@@ -1,12 +1,12 @@
 import { Request, Response, NextFunction } from "express";
 import { PrismaClient } from "@prisma/client";
 import { HttpCode } from "../core/constants";
-import tokenOps from "../core/config/tocken.function";
+import tokenOps from "../core/config/jwt.function";
 import sendError from "../core/constants/errors";
 
 const prisma = new PrismaClient();
 
-const middleware = {
+const userMid = {
     // verification of user's role
     roleUser: async (req: Request, res: Response, next: NextFunction) => {
         try {
@@ -25,22 +25,24 @@ const middleware = {
     },
     verifyUser: async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const accessToken = JSON.stringify(req.headers.authorization)
+            const accessToken = req.headers.authorization
             const decodedPayload = tokenOps.decodeAccessToken(accessToken)
+            //const user = token.verifyAccessTOken(accessToken)
+            //req.user = user
             if (decodedPayload && 'name,email,password' in decodedPayload) {
                 const user = await prisma.user.findFirst({
                     where: {
                         email: decodedPayload.email
                     }
                 })
-                if (user) next()
-                else res.json({ "msg": "User not found" }).status(HttpCode.UNAUTHORIZED)
-            }
-        } catch (error) {
-            sendError(res, error)
+                //if (user) next()
+                //else res.json({ "msg": "User not found" }).status(HttpCode.UNAUTHORIZED)
         }
+        } catch(error) {
+        sendError(res, error)
+    }
 
-    },
+},
 }
 
-export default middleware
+export default userMid
