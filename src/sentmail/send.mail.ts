@@ -1,4 +1,4 @@
-import { envs } from "./env";
+import { envs } from '../core/config/env';
 import nodemailer from 'nodemailer'
 
 
@@ -7,17 +7,17 @@ const sendMail = (email: string, subject: string, text: string) => {
 
     const transporter = nodemailer.createTransport({
         service: "Gmail",
-        host: "smtp.gmail.com",
-        port: 465,
+        host: envs.GMAIL_HOST,
+        port: envs.GMAIL_PORT,
         secure: true,
         auth: {
-            user: envs.GMAIL_ACCOUNT,
+            user: envs.GMAIL_EMAIL,
             pass: envs.GMAIL_PASSWORD,
         },
     });
     // composing the mail
     const mailOptions = {
-        from: "kouambrice10@gmail.com",
+        from: envs.GMAIL_EMAIL,
         to: email,
         subject: subject,
         text: text,

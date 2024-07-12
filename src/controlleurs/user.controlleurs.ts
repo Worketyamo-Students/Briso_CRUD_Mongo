@@ -4,11 +4,11 @@ import { PrismaClient } from "@prisma/client";
 import bcrypt from 'bcrypt'
 import sendError from "../core/constants/errors";
 import chalk from "chalk"
-import { regex } from "../core/config/env";
-import sendMail from "../core/config/send.mail";
+import sendMail from "../sentmail/send.mail";
 import { otpGenerate } from "../core/config/otp_generator";
 import tokenOps from "../core/config/jwt.function";
 import { validationResult } from 'express-validator'
+import { sendOTP } from "../sentmail/template.mail";
 
 const prisma = new PrismaClient()
 
@@ -33,39 +33,31 @@ const Contolleurs = {
                 res.status(HttpCode.UNPROCESSABLE_ENTITY).json({ errors: errors.array() })
                 console.log("errors found in user's entries")
             }
-            errorValidation(req,res)
+            errorValidation(req, res)
 
-            const { name, email, password, otp } = req.body
+            const { name, email, password } = req.body
             // hashing the password
             const passHash = await bcrypt.hash(password, 12)
 
-            const code_otp = parseInt(otpGenerate())
+            const code_otp = otpGenerate()
             const expiredAt = new Date(Date.now() + 10 * 60 * 1000)
             const user = await prisma.user.create({
                 data: {
                     name,
                     email,
                     password: passHash,
-                    otp:{
-                        code: otp,
+                    otp: {
+                        code: code_otp,
                         expiredAt
                     }
-                    
+
                 },
             })
-            const updateUser = await prisma.user.update({
-                where: {
-                    email: user.email
-                },
-                data: {
-                    code_otp,
-                    otpExpiredAt,
-                },
-            })
-            if (user) {
-                sendMail(email, "This is an anonymous connection!", `<h1 style=color:blue>Here is your code of validation :</h1> ${code_otp}`)
-                res.json({ "message": "user successfully created" })
-                console.log(updateUser)
+            if (user!=null) {
+                const otpTemplate = sendOTP(user.otp?.code)
+                sendMail(email, "This is an anonymous connection!", otpTemplate)
+                console.log("It arrived here")
+                res.json("User successfully created").status(HttpCode.OK)
             } else res.send({ msg: "could not create user" })
         } catch (error) {
             sendError(res, error)
@@ -130,24 +122,21 @@ const Contolleurs = {
                     email
                 },
             })
-            if (user != null) {
-                const actual_time = new Date(Date.now()).toISOString()
-                if (user.code_otp != null) {
-                    if (user.otpExpiredAt.toISOString() < actual_time) return res.json({ msg: "OTP code expired" }).status(HttpCode.UNAUTHORIZED)
-
-                    if (user.code_otp === code_otp) {
+            const actual_time = new Date(Date.now())
+            if (user?.otp != null) {
+                    if (user.otp.code === code_otp || user.otp.expiredAt > actual_time) {
                         const userUpdate = await prisma.user.update({
                             where: {
                                 email: user.email
                             },
                             data: {
-                                code_otp: null
+                                otp: null
                             }
                         });
                         res.json({ msg: 'OTP verified successfully' })
                         console.log(userUpdate)
                     }
-                } else console.log("no otp registered")
+             
             } else {
                 return res.json({ msg: "User's email not corresponding" }).status(HttpCode.NO_CONTENT)
             }
@@ -166,7 +155,7 @@ const Contolleurs = {
             })
             if (user != null) {
                 const testPass = await bcrypt.compare(password, user.password)
-                if (testPass || user.code_otp == null) {
+                if (testPass || user.otp?.code == null) {
                     //const accessToken = tokenOps.createToken(user)
                     const refreshToken = tokenOps.createToken(user)
                     user.password = ""
